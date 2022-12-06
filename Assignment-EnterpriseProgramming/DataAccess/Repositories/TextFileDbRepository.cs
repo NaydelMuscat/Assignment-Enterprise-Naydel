@@ -44,17 +44,52 @@ namespace DataAccess.Repositories
             return file;
         }
 
-        public void EditFile(int fileId, string changes, string editor)
+        //public void EditFile(int fileId, string changes, string editor)
+        //{
+        //    var existingFile = (from file in fileSharingContext.TextFiles
+        //                        where file.Id == fileId
+        //                        select file).FirstOrDefault();
+
+        //    existingFile.Data = changes;
+
+        //    existingFile.LastEditedBy = editor;
+        //    fileSharingContext.SaveChanges();
+        //}
+
+        public IQueryable<Acl> GetPermissions()
         {
-            var existingFile = (from file in fileSharingContext.TextFiles
-                                where file.Id == fileId
-                                select file).FirstOrDefault();
+            return fileSharingContext.Acls;
+        }
 
-            existingFile.Data = changes;
 
-            existingFile.LastEditedBy = editor;
+
+        public void EditFile(int fileId,string changes, TextFile updatedFile)
+        {
+            var originalFile = GetFile(updatedFile.Id);
+
+            originalFile.Id = fileId;
+            originalFile.FileName = updatedFile.FileName;
+            originalFile.UploadedOn = updatedFile.UploadedOn;
+            originalFile.Data = updatedFile.Data;
+            originalFile.LastUpdated = updatedFile.LastUpdated;
+            originalFile.LastEditedBy = updatedFile.LastEditedBy;
             fileSharingContext.SaveChanges();
         }
+
+        //public void EditItem(Item updatedItem)
+        //{
+        //    var originalItem = GetItem(updatedItem.Id);
+
+        //    originalItem.Name = updatedItem.Name;
+        //    originalItem.Description = updatedItem.Description;
+        //    originalItem.CategoryId = updatedItem.CategoryId;
+        //    originalItem.ImagePath = updatedItem.ImagePath;
+        //    originalItem.Price = updatedItem.Price;
+        //    originalItem.Stock = updatedItem.Stock;
+
+        //    context.SaveChanges();
+        //}
+
     }
 }
 

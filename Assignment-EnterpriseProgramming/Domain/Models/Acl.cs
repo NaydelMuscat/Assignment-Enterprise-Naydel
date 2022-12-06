@@ -19,5 +19,7 @@ namespace Domain.Models
         public Guid FileName { get; set; }
 
         public virtual TextFile TextFileModel { get; set; }
+
+        public bool UserAccess { get; set; }
     }
 }

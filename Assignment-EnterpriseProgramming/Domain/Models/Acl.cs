@@ -16,6 +16,7 @@ namespace Domain.Models
         public string UserName { get; set; }
 
         [ForeignKey("TextFileModel")]
+        public int FileIdFk { get; set; }
         public Guid FileName { get; set; }
 
         public virtual TextFile TextFileModel { get; set; }

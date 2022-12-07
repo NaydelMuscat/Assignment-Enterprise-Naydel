@@ -5,16 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccess.Context
+namespace DataAccess.context
 {
-    public class FileSharingContext: IdentityDbContext
+    public class FileSharingContext : IdentityDbContext
     {
         public FileSharingContext(DbContextOptions<FileSharingContext> options)
-                : base(options)
+            : base(options)
         {
         }
-
-        public DbSet<Acl> Acls { get; set; }
         public DbSet<TextFile> TextFiles { get; set; }
+        public DbSet<Acl> Acls { get; set; }
     }
 }

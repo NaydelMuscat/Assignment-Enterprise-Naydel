@@ -1,4 +1,4 @@
-﻿using DataAccess.Context;
+﻿using DataAccess.context;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -34,34 +34,19 @@ namespace DataAccess.Repositories
 
 
 
-        public TextFile ShareFile(int fileId, string Recipient)
+        public void ShareFile(int fileId, string Recipient)
         {
             var recipient = fileSharingContext.Acls.SingleOrDefault(x => x.UserName.Equals(Recipient));
-
-            var file = GetFiles().SingleOrDefault(x => x.Id == fileId);
-            recipient.FileName = file.FileName;
+            //var file = GetFiles().SingleOrDefault(x => x.Id == fileId);
+            recipient.FileIdFk = fileId;
             fileSharingContext.SaveChanges();
-            return file;
+           
         }
-
-        //public void EditFile(int fileId, string changes, string editor)
-        //{
-        //    var existingFile = (from file in fileSharingContext.TextFiles
-        //                        where file.Id == fileId
-        //                        select file).FirstOrDefault();
-
-        //    existingFile.Data = changes;
-
-        //    existingFile.LastEditedBy = editor;
-        //    fileSharingContext.SaveChanges();
-        //}
 
         public IQueryable<Acl> GetPermissions()
         {
             return fileSharingContext.Acls;
         }
-
-
 
         public void EditFile(int fileId,string changes, TextFile updatedFile)
         {
@@ -70,25 +55,13 @@ namespace DataAccess.Repositories
             originalFile.Id = fileId;
             originalFile.FileName = updatedFile.FileName;
             originalFile.UploadedOn = updatedFile.UploadedOn;
-            originalFile.Data = updatedFile.Data;
+            originalFile.Data = changes;
             originalFile.LastUpdated = updatedFile.LastUpdated;
             originalFile.LastEditedBy = updatedFile.LastEditedBy;
             fileSharingContext.SaveChanges();
         }
 
-        //public void EditItem(Item updatedItem)
-        //{
-        //    var originalItem = GetItem(updatedItem.Id);
-
-        //    originalItem.Name = updatedItem.Name;
-        //    originalItem.Description = updatedItem.Description;
-        //    originalItem.CategoryId = updatedItem.CategoryId;
-        //    originalItem.ImagePath = updatedItem.ImagePath;
-        //    originalItem.Price = updatedItem.Price;
-        //    originalItem.Stock = updatedItem.Stock;
-
-        //    context.SaveChanges();
-        //}
+     
 
     }
 }

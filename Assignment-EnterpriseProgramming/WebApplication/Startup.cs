@@ -1,4 +1,6 @@
-using DataAccess.Context;
+using BusinessLogic.Services;
+using DataAccess.context;
+using DataAccess.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,6 +37,10 @@ namespace WebApplication
                 .AddEntityFrameworkStores<FileSharingContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddScoped<TextFileDbRepository>();
+            services.AddScoped<FileService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

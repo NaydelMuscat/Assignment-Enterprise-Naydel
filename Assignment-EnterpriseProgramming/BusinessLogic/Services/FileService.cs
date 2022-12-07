@@ -1,10 +1,8 @@
-﻿using DataAccess.Context;
-using DataAccess.Repositories;
+﻿using DataAccess.Repositories;
 using Domain.Models;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BusinessLogic.Services
@@ -58,37 +56,73 @@ namespace BusinessLogic.Services
         {
             return GetFiles().SingleOrDefault(f => f.Id == fileId);
         }
-        public void EditFile(int fileId, string changes,  TextFile file)
+        public void EditFile(int fileId, string changes, bool access)
         {
-            
 
-
-          textFileDbRepository.EditFile(fileId ,changes,new Domain.Models.TextFile()
+            //Permissions
+            if (textFileDbRepository.GetPermissions().Where(x => x.UserAccess == true).SingleOrDefault() != null)
             {
-                Id = fileId,
-                LastUpdated = DateTime.Now,
-                Data = changes,
-                Author = file.Author,
 
+                textFileDbRepository.EditFile(fileId, changes, new Domain.Models.TextFile()
+                {
+                    Id = fileId,
+                    LastUpdated = DateTime.Now,
+                    Data = changes
+
+                });
+                //Digital Signature
+                using SHA256 alg = SHA256.Create();
+                byte[] data = Encoding.ASCII.GetBytes(changes);
+                byte[] hash = alg.ComputeHash(data);
+
+                RSAParameters SharedParameters;
+                byte[] signedHash;
+
+                //Generate Signature
+                using (RSA rsa = RSA.Create())
+                {
+                    SharedParameters = rsa.ExportParameters(false);
+
+                    RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(rsa);
+                    rsaFormatter.SetHashAlgorithm(nameof(SHA256));
+
+                    signedHash = rsaFormatter.CreateSignature(hash);
+
+                }
+            }
+            else if (textFileDbRepository.GetPermissions().Where(x => x.UserAccess == false).SingleOrDefault() == null)
+            {
                 
-            });
+               
+                textFileDbRepository.EditFile(fileId,changes, new Domain.Models.TextFile()
+                {
+                    Id = fileId,
+                    LastUpdated = DateTime.Now,
+                    Data = changes
+                });
+            }
+        }
+        public IQueryable<Acl> GetPermissions()
+        {
+            var permissions = from access in textFileDbRepository.GetPermissions()
+                              select new Acl()
+                              {
+                                  UserAccess = access.UserAccess
+
+                              };
+            return permissions;
+
         }
 
-        //public void EditItem(int id, CreateItemViewModel model)
-        //{
-        //    itemRepository.EditItem(
-        //         new Domain.Models.Item()
-        //         {
-        //             Id = id,
-        //             Name = model.Name,
-        //             Description = model.Description,
-        //             CategoryId = model.CategoryId,
-        //             ImagePath = model.ImagePath,
-        //             Price = model.Price,
-        //             Stock = model.Stock
-        //         }
-        //        );
+        public void ShareFile(int fileId, string Recipient, Acl file)
+        {
+            textFileDbRepository.ShareFile(fileId, Recipient);
+            {
+                fileId = file.FileIdFk;
+                Recipient = file.UserName;
+            }
 
-        //}
+        }
+
     }
 }

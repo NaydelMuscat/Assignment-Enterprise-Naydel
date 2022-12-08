@@ -13,7 +13,7 @@ namespace DataAccess.Repositories
 
         public TextFileDbRepository(FileSharingContext _fileSharingContext)
         {
-            _fileSharingContext = fileSharingContext;
+            fileSharingContext = _fileSharingContext;
         }
 
         public void CreateFile(TextFile textFile)
@@ -32,12 +32,17 @@ namespace DataAccess.Repositories
             return GetFiles().SingleOrDefault(x => x.Id == id);
         }
 
-
+        public IQueryable<Acl> GetUser()
+        {
+            return fileSharingContext.Acls;
+        }
 
         public void ShareFile(int fileId, string Recipient)
         {
-            var recipient = fileSharingContext.Acls.SingleOrDefault(x => x.UserName.Equals(Recipient));
-            //var file = GetFiles().SingleOrDefault(x => x.Id == fileId);
+            var recipient = GetUser().SingleOrDefault(x => x.UserName.Equals(Recipient));
+                //fileSharingContext.Acls.SingleOrDefault(x => x.UserName.Equals(Recipient));
+            var fileid = GetFiles().SingleOrDefault(x => x.Id == fileId);
+            
             recipient.FileIdFk = fileId;
             fileSharingContext.SaveChanges();
            

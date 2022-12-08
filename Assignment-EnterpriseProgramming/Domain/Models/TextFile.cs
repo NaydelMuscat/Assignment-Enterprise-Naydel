@@ -23,10 +23,8 @@ namespace Domain.Models
         [StringLength(100)]
         public string Author { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string LastEditedBy { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public string LastEditedBy { get; set; } 
+        public Nullable<DateTime> LastUpdated { get; set; }
 
 
 

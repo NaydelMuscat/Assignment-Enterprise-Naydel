@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Channels;
 
 namespace BusinessLogic.Services
 {
@@ -56,11 +57,11 @@ namespace BusinessLogic.Services
         {
             return GetFiles().SingleOrDefault(f => f.Id == fileId);
         }
-        public void EditFile(int fileId, string changes, bool access)
+        public void EditFile(int fileId, string changes, int userId)
         {
 
             //Permissions
-            if (textFileDbRepository.GetPermissions().Where(x => x.UserAccess == true).SingleOrDefault() != null)
+            if (textFileDbRepository.GetPermissions().Where(x => x.FileIdFk == fileId && x.Id == userId && x.UserAccess == true).Any())
             {
 
                 textFileDbRepository.EditFile(fileId, changes, new Domain.Models.TextFile()
@@ -71,44 +72,21 @@ namespace BusinessLogic.Services
 
                 });
                 //Digital Signature
-                using SHA256 alg = SHA256.Create();
-                byte[] data = Encoding.ASCII.GetBytes(changes);
-                byte[] hash = alg.ComputeHash(data);
-
-                RSAParameters SharedParameters;
-                byte[] signedHash;
-
-                //Generate Signature
-                using (RSA rsa = RSA.Create())
-                {
-                    SharedParameters = rsa.ExportParameters(false);
-
-                    RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(rsa);
-                    rsaFormatter.SetHashAlgorithm(nameof(SHA256));
-
-                    signedHash = rsaFormatter.CreateSignature(hash);
-
-                }
-            }
-            else if (textFileDbRepository.GetPermissions().Where(x => x.UserAccess == false).SingleOrDefault() == null)
-            {
+                var signature = DigitalSign(changes);
                 
-               
-                textFileDbRepository.EditFile(fileId,changes, new Domain.Models.TextFile()
-                {
-                    Id = fileId,
-                    LastUpdated = DateTime.Now,
-                    Data = changes
-                });
+            }
+            else
+            {
+                throw new Exception("user does not have access to edit file");
             }
         }
-        public IQueryable<Acl> GetPermissions()
+        public IQueryable<Acl> GetPermissions( )
         {
             var permissions = from access in textFileDbRepository.GetPermissions()
                               select new Acl()
-                              {
-                                  UserAccess = access.UserAccess
-
+                              {                                 
+                                  FileIdFk = access.FileIdFk,
+                                  Id = access.Id,
                               };
             return permissions;
 
@@ -122,6 +100,29 @@ namespace BusinessLogic.Services
                 Recipient = file.UserName;
             }
 
+        }
+
+        private byte[] DigitalSign(string changes)
+        {
+            
+            using SHA256 alg = SHA256.Create();
+            byte[] data = Encoding.ASCII.GetBytes(changes);
+            byte[] hash = alg.ComputeHash(data);
+
+            RSAParameters SharedParameters;
+            
+
+            //Generate Signature
+            using (RSA rsa = RSA.Create())
+            {
+                SharedParameters = rsa.ExportParameters(false);
+
+                RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(rsa);
+                rsaFormatter.SetHashAlgorithm(nameof(SHA256));
+
+                return rsaFormatter.CreateSignature(hash);
+
+            }
         }
 
     }

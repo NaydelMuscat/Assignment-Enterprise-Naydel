@@ -57,24 +57,50 @@ namespace WebApplication.Controllers
            var getFile = fileService.GetFile(acl.FileIdFk);
             return View(getFile);
         }
-        
+
+        [HttpGet]
+        public IActionResult editFile(int id)
+        {
 
 
+            var currentFile = fileService.GetFile(id);
 
+            TextFile myModel = new TextFile()
+            {
+                Id = currentFile.Id,
+                FileName = currentFile.FileName,
+                UploadedOn = currentFile.UploadedOn,
+                Data = currentFile.Data,
+                Author = currentFile.Author,
+                LastEditedBy = currentFile.LastEditedBy,
+                LastUpdated = currentFile.LastUpdated
 
-            //fileService.ShareFile(acl.FileIdFk, acl.UserName, acl);
-            //ViewBag.Message = "File was shared successfully";
-            //var listFiles = fileService.GetFile();
-            //return View("ListFiles", listFiles);
+            };
 
-            //var file = fileService.GetFile(id);
-            //if (file == null)
-            //{
-            //    ViewBag.Error = "File doesn't exist, Cannot share file";
-            //    var listfile = fileService.GetFiles();
-            //    return View("ListFiles", listfile);
-            //}
-            //else return View(file);
+            return View(myModel);
         }
+        [HttpPost]
+        public IActionResult Edit(int id, TextFile file)
+        {
+            return View();
+        }
+
+
+
+
+        //fileService.ShareFile(acl.FileIdFk, acl.UserName, acl);
+        //ViewBag.Message = "File was shared successfully";
+        //var listFiles = fileService.GetFile();
+        //return View("ListFiles", listFiles);
+
+        //var file = fileService.GetFile(id);
+        //if (file == null)
+        //{
+        //    ViewBag.Error = "File doesn't exist, Cannot share file";
+        //    var listfile = fileService.GetFiles();
+        //    return View("ListFiles", listfile);
+        //}
+        //else return View(file);
+    }
     }
 

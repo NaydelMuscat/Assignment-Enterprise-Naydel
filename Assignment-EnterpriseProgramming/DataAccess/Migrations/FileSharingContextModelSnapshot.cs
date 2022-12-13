@@ -58,11 +58,16 @@ namespace DataAccess.Migrations
                         .HasMaxLength(100);
 
                     b.Property<string>("Data")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DigitalSignature")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("FileName")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastEditedBy")
                         .HasColumnType("nvarchar(max)");

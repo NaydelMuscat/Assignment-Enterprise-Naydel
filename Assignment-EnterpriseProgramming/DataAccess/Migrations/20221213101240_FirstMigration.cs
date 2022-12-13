@@ -56,8 +56,10 @@ namespace DataAccess.Migrations
                     UploadedOn = table.Column<DateTime>(nullable: false),
                     Data = table.Column<string>(nullable: false),
                     Author = table.Column<string>(maxLength: 100, nullable: false),
-                    LastEditedBy = table.Column<string>(maxLength: 100, nullable: false),
-                    LastUpdated = table.Column<DateTime>(nullable: false)
+                    LastEditedBy = table.Column<string>(nullable: true),
+                    LastUpdated = table.Column<DateTime>(nullable: true),
+                    DigitalSignature = table.Column<string>(nullable: true),
+                    FilePath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -176,7 +178,7 @@ namespace DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(nullable: true),
                     FileIdFk = table.Column<int>(nullable: false),
                     FileName = table.Column<Guid>(nullable: false),
                     UserAccess = table.Column<bool>(nullable: false)

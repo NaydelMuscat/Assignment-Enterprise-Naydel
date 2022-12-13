@@ -1,38 +1,54 @@
 ﻿using DataAccess.Repositories;
+using DataAccess.Repositories.DataAccess.Repositories;
 using Domain.Models;
+using Microsoft.AspNetCore.Hosting;
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Channels;
 
 namespace BusinessLogic.Services
 {
     public class FileService
     {
         private TextFileDbRepository textFileDbRepository { get; set; }
+        
 
         public FileService(TextFileDbRepository _textFileDbRepository)
         {
             textFileDbRepository = _textFileDbRepository;
+          
+            
+
         }
 
         //Create File
-        public void CreateFile(Guid fileName, DateTime uploadedOn, string data, string author)
+        public void CreateFile(Guid fileName, DateTime uploadedOn, string data, string author, string FilePath = "")
         {
-            if (textFileDbRepository.GetFiles().Where(file => file.FileName == fileName).Count() > 0)
-            {
-                throw new Exception("File already exists, Please use a different name");
-            }
+           
 
-            textFileDbRepository.CreateFile(new Domain.Models.TextFile()
-            {
-                FileName = fileName,
-                UploadedOn = uploadedOn,
-                Data = data,
-                Author = author
-            });
+            
+
+
+                if (textFileDbRepository.GetFiles().Where(file => file.FileName == fileName).Count() > 0)
+                {
+                    throw new Exception("File already exists, Please use a different name");
+                }
+
+                textFileDbRepository.CreateFile(new Domain.Models.TextFile()
+                {
+
+
+                    FileName = fileName,
+                    UploadedOn = uploadedOn,
+                    Data = data,
+                    Author = author,
+                    FilePath = FilePath
+                });
+            
         }
+        //}
 
         //GetFiles
         public IQueryable<TextFile> GetFiles()
@@ -68,23 +84,24 @@ namespace BusinessLogic.Services
                 {
                     Id = fileId,
                     LastUpdated = DateTime.Now,
-                    Data = changes
+                    LastEditedBy = Convert.ToString(userId),
+                    Data = changes,
+                    DigitalSignature = Convert.ToBase64String(DigitalSign(changes))
 
                 });
-                //Digital Signature
-                var signature = DigitalSign(changes);
-                
+
+
             }
             else
             {
                 throw new Exception("user does not have access to edit file");
             }
         }
-        public IQueryable<Acl> GetPermissions( )
+        public IQueryable<Acl> GetPermissions()
         {
             var permissions = from access in textFileDbRepository.GetPermissions()
                               select new Acl()
-                              {                                 
+                              {
                                   FileIdFk = access.FileIdFk,
                                   Id = access.Id,
                               };
@@ -104,13 +121,13 @@ namespace BusinessLogic.Services
 
         private byte[] DigitalSign(string changes)
         {
-            
+
             using SHA256 alg = SHA256.Create();
             byte[] data = Encoding.ASCII.GetBytes(changes);
             byte[] hash = alg.ComputeHash(data);
 
             RSAParameters SharedParameters;
-            
+
 
             //Generate Signature
             using (RSA rsa = RSA.Create())

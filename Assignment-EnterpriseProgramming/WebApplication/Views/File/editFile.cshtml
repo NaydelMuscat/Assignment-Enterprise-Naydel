@@ -4,29 +4,13 @@
     ViewData["Title"] = "editFile";
 }
 
-<h1>editFile</h1>
+<h1>EditFile</h1>
 
-<h4>TextFile</h4>
-<hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="editFile">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FileName" class="control-label"></label>
-                <input asp-for="FileName" class="form-control" />
-                <span asp-validation-for="FileName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UploadedOn" class="control-label"></label>
-                <input asp-for="UploadedOn" class="form-control" />
-                <span asp-validation-for="UploadedOn" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Data" class="control-label"></label>
                 <input asp-for="Data" class="form-control" />

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(FileSharingContext))]
-    [Migration("20221211181423_FourthMigration")]
-    partial class FourthMigration
+    [Migration("20221213112554_SecondMigration")]
+    partial class SecondMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,11 +60,16 @@ namespace DataAccess.Migrations
                         .HasMaxLength(100);
 
                     b.Property<string>("Data")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DigitalSignature")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("FileName")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastEditedBy")
                         .HasColumnType("nvarchar(max)");

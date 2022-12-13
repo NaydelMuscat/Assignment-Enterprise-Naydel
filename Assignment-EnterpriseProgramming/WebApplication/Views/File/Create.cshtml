@@ -6,31 +6,13 @@
 
 <h1>Create</h1>
 
-<br />
-@if (string.IsNullOrEmpty(ViewBag.Message) == false)
-{
-    <div class="alert alert-primary" role="alert">
-        @ViewBag.Message
-    </div>
-}
-
-else if (string.IsNullOrEmpty(ViewBag.Error) == false)
-{
-    <div class="alert alert-danger" role="alert">
-        @ViewBag.Error
-    </div>
-}
+<h4>TextFile</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-           
-            <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
+   
             <div class="form-group">
                 <label asp-for="Author" class="control-label"></label>
                 <input asp-for="Author" class="form-control" />
@@ -40,6 +22,13 @@ else if (string.IsNullOrEmpty(ViewBag.Error) == false)
                 <label asp-for="UploadedOn" class="control-label"></label>
                 <input asp-for="UploadedOn" class="form-control" />
                 <span asp-validation-for="UploadedOn" class="text-danger"></span>
+            </div>
+          
+            <div class="form-group">
+                <label asp-for="FilePath" class="control-label"></label>
+                
+                <input type="file" asp-for="FilePath" class="form-control" name="filePath" />
+                <span asp-validation-for="FilePath" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

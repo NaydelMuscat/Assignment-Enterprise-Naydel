@@ -16,7 +16,7 @@ namespace Domain.Models
         [Required]
         public DateTime UploadedOn { get; set; }
 
-        [Required]
+       
         public string Data { get; set; }
 
         [Required]
@@ -25,6 +25,10 @@ namespace Domain.Models
 
         public string LastEditedBy { get; set; } 
         public Nullable<DateTime> LastUpdated { get; set; }
+
+        public string DigitalSignature { get; set; }
+        
+        public string FilePath { get; set; }
 
 
 

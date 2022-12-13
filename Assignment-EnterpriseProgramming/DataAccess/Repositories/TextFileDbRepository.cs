@@ -2,12 +2,14 @@
 using Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace DataAccess.Repositories
 {
-    public class TextFileDbRepository
+    public class TextFileDbRepository 
     {
         private FileSharingContext fileSharingContext;
 
@@ -24,8 +26,12 @@ namespace DataAccess.Repositories
 
         public IQueryable<TextFile> GetFiles()
         {
+
             return fileSharingContext.TextFiles;
+
         }
+
+    
 
         public TextFile GetFile(int id)
         {
@@ -59,15 +65,14 @@ namespace DataAccess.Repositories
 
             originalFile.Id = fileId;
             originalFile.FileName = updatedFile.FileName;
-            originalFile.UploadedOn = updatedFile.UploadedOn;
+            originalFile.UploadedOn = DateTime.Now;
             originalFile.Data = changes;
             originalFile.LastUpdated = updatedFile.LastUpdated;
             originalFile.LastEditedBy = updatedFile.LastEditedBy;
             fileSharingContext.SaveChanges();
         }
 
-     
-
+       
     }
 }
 

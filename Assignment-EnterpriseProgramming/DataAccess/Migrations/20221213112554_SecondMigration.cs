@@ -7,21 +7,19 @@ namespace DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "LastEditedBy",
+                name: "Data",
                 table: "TextFiles",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(100)",
-                oldMaxLength: 100);
+                oldType: "nvarchar(max)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "LastEditedBy",
+                name: "Data",
                 table: "TextFiles",
-                type: "nvarchar(100)",
-                maxLength: 100,
+                type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldNullable: true);

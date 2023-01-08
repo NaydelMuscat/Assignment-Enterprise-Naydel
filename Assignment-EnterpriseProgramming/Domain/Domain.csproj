@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Interface\**" />
+    <EmbeddedResource Remove="Models\Interface\**" />
+    <None Remove="Models\Interface\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.30" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.30" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.30" />
@@ -13,10 +19,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Interface\" />
   </ItemGroup>
 
 </Project>

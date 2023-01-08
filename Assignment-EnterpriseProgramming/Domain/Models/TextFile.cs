@@ -10,7 +10,6 @@ namespace Domain.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public Guid FileName { get; set; }
 
         [Required]

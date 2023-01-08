@@ -1,26 +1,17 @@
 using BusinessLogic.Services;
 using DataAccess.context;
 using DataAccess.Repositories;
-using DataAccess.Repositories.DataAccess.Repositories;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace WebApplication
-{
+{ 
     public class Startup
     {
         public Startup(IConfiguration configuration)

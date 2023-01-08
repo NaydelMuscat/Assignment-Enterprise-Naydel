@@ -1,54 +1,70 @@
-﻿using DataAccess.Repositories;
-using DataAccess.Repositories.DataAccess.Repositories;
+﻿using BusinessLogic.ViewModels;
+using DataAccess.Repositories;
 using Domain.Models;
-using Microsoft.AspNetCore.Hosting;
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+
+
+
 
 namespace BusinessLogic.Services
 {
     public class FileService
     {
         private TextFileDbRepository textFileDbRepository { get; set; }
-        
+
+
 
         public FileService(TextFileDbRepository _textFileDbRepository)
         {
             textFileDbRepository = _textFileDbRepository;
-          
-            
-
         }
+
+
 
         //Create File
-        public void CreateFile(Guid fileName, DateTime uploadedOn, string data, string author, string FilePath = "")
+        public Guid CreateFile(Guid fileName, DateTime uploadedOn, string data, string author, string filepath = "")
         {
-           
-
-            
-
-
-                if (textFileDbRepository.GetFiles().Where(file => file.FileName == fileName).Count() > 0)
-                {
-                    throw new Exception("File already exists, Please use a different name");
-                }
-
-                textFileDbRepository.CreateFile(new Domain.Models.TextFile()
-                {
+            if (textFileDbRepository.GetFiles().Where(file => file.FileName == fileName).Count() > 0)
+            {
+                throw new Exception("File already exists, Please use a different name");
+            }
 
 
-                    FileName = fileName,
-                    UploadedOn = uploadedOn,
-                    Data = data,
-                    Author = author,
-                    FilePath = FilePath
-                });
-            
+
+            textFileDbRepository.CreateFile(new Domain.Models.TextFile()
+            {
+                FileName = fileName,
+                UploadedOn = uploadedOn,
+                Data = data,
+                Author = author,
+                FilePath = filepath
+            });
+            return fileName;
         }
-        //}
+
+
+
+        public void CreatePermissions(Guid fileName, string user, bool useraccess)
+        {
+
+
+
+            var file = GetFiles().SingleOrDefault(x => x.FileName == fileName);
+            textFileDbRepository.CreatePermissions(new Domain.Models.Acl()
+            {
+
+
+
+                FileName = fileName,
+                UserAccess = useraccess,
+                UserName = user
+            });
+        }
+
+
 
         //GetFiles
         public IQueryable<TextFile> GetFiles()
@@ -58,75 +74,91 @@ namespace BusinessLogic.Services
                          {
                              FileName = file.FileName,
                              Author = file.Author,
-                             Id = file.Id,
                              UploadedOn = file.UploadedOn,
                              Data = file.Data,
                              LastEditedBy = file.LastEditedBy,
                              LastUpdated = file.LastUpdated,
 
+
+
                          };
             return result;
         }
 
+
+
+        public IQueryable<Acl> GetUsers()
+        {
+            var result = from acl in textFileDbRepository.GetUsers()
+                         select new Acl()
+                         {
+                             Id = acl.Id,
+                             FileName = acl.FileName,
+                             UserName = acl.UserName,
+                             UserAccess = acl.UserAccess
+                         };
+            return result;
+        }
+
+
+
         //GetFile
-        public TextFile GetFile(int fileId)
+        public TextFile GetFile(Guid id)
         {
-            return GetFiles().SingleOrDefault(f => f.Id == fileId);
+            return GetFiles().SingleOrDefault(f => f.FileName == id);
         }
-        public void EditFile(int fileId, string changes, int userId)
+
+
+
+
+        public void EditFile(Guid fileId, string changes, ListFileViewModels file)
         {
 
-            //Permissions
-            if (textFileDbRepository.GetPermissions().Where(x => x.FileIdFk == fileId && x.Id == userId && x.UserAccess == true).Any())
+
+
+            textFileDbRepository.EditFile(fileId, changes, new Domain.Models.TextFile()
             {
 
-                textFileDbRepository.EditFile(fileId, changes, new Domain.Models.TextFile()
-                {
-                    Id = fileId,
-                    LastUpdated = DateTime.Now,
-                    LastEditedBy = Convert.ToString(userId),
-                    Data = changes,
-                    DigitalSignature = Convert.ToBase64String(DigitalSign(changes))
-
-                });
-
-
-            }
-            else
-            {
-                throw new Exception("user does not have access to edit file");
-            }
+                FileName = fileId,
+                LastUpdated = file.LastUpdated,
+                LastEditedBy = file.LastEditedBy,
+                Data = changes,
+                DigitalSignature = file.DigitalSignature
+            });
         }
+
+
+
+
         public IQueryable<Acl> GetPermissions()
         {
             var permissions = from access in textFileDbRepository.GetPermissions()
                               select new Acl()
                               {
-                                  FileIdFk = access.FileIdFk,
                                   Id = access.Id,
                               };
             return permissions;
 
-        }
 
-        public void ShareFile(int fileId, string Recipient, Acl file)
-        {
-            textFileDbRepository.ShareFile(fileId, Recipient);
-            {
-                fileId = file.FileIdFk;
-                Recipient = file.UserName;
-            }
 
         }
 
-        private byte[] DigitalSign(string changes)
+
+
+        public byte[] DigitalSign(string changes)
         {
+
+
 
             using SHA256 alg = SHA256.Create();
             byte[] data = Encoding.ASCII.GetBytes(changes);
             byte[] hash = alg.ComputeHash(data);
 
+
+
             RSAParameters SharedParameters;
+
+
 
 
             //Generate Signature
@@ -134,13 +166,23 @@ namespace BusinessLogic.Services
             {
                 SharedParameters = rsa.ExportParameters(false);
 
+
+
                 RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(rsa);
                 rsaFormatter.SetHashAlgorithm(nameof(SHA256));
 
+
+
                 return rsaFormatter.CreateSignature(hash);
+
+
 
             }
         }
+
+
+
+
 
     }
 }

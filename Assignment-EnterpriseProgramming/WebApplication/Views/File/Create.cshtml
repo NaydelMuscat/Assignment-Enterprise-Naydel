@@ -1,36 +1,21 @@
 ﻿@model Domain.Models.TextFile
 
-
-
 @{
     ViewData["Title"] = "Create";
 }
 
-
-
 <h1>Create</h1>
 
-
-
-<h4>TextFile</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="UploadedOn" class="control-label"></label>
-                <input asp-for="UploadedOn" class="form-control" />
-                <span asp-validation-for="UploadedOn" class="text-danger"></span>
-            </div>
-
             <div class="form-group">
                 <label asp-for="Author" class="control-label"></label>
                 <input asp-for="Author" class="form-control" />
                 <span asp-validation-for="Author" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label class="control-label">Upload File</label>
                 <input type="file" class="form-control" name="filepath" />
@@ -42,17 +27,9 @@
         </form>
     </div>
 </div>
-
-
-
 <div>
-
     <a class="nav-link text-dark" asp-area="" asp-controller="File" asp-action="ListFiles">Back to List</a>
-
-
 </div>
-
-
 
 @section Scripts {
     @{

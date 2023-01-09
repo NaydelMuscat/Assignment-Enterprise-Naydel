@@ -5,8 +5,9 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Host;
+
 using System;
 using System.Linq;
 
@@ -19,41 +20,31 @@ namespace WebApplication.Controllers
         private FileService fileService;
         private TextFileDbRepository textFileDbRepository;
         private IWebHostEnvironment webHostEnvironment;
-
-
-
-        public FileController(FileService _fileService, TextFileDbRepository textFileDbRepository, IWebHostEnvironment _webHostEnvironment)
+        private LogService log;
+        public FileController(FileService _fileService, TextFileDbRepository textFileDbRepository,
+                             IWebHostEnvironment _webHostEnvironment, LogService _log)
         {
             fileService = _fileService;
             this.textFileDbRepository = textFileDbRepository;
             this.webHostEnvironment = _webHostEnvironment;
+           
+            this.log = _log;
         }
-
-
-
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-
-
-
         [HttpPost]
+        [Authorize]
         public IActionResult Create(TextFile file, IFormFile filepath)
         {
-
             try
             {
-
                 //Upload of file
                 if (filepath != null)
-
                 {//C:\Users\User\Desktop\Enterprise\Assignment-EnterpriseProgramming\WebApplication\Data\
-
-
-
                     string uniqueFileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(filepath.FileName);
                     string absolutePath = webHostEnvironment.ContentRootPath + @"\Data\" + uniqueFileName;
                     using (var destinationFile = System.IO.File.Create(absolutePath))
@@ -64,25 +55,27 @@ namespace WebApplication.Controllers
                     string[] lines = System.IO.File.ReadAllLines(absolutePath);
                     file.Data = string.Join("", lines);
                 }
-
-
-
-                var createFile = fileService.CreateFile(Guid.NewGuid(), file.UploadedOn, file.Data, file.Author, file.FilePath);
+                var createFile = fileService.CreateFile(Guid.NewGuid(), file.Data, file.Author, file.FilePath);
+               
                 fileService.CreatePermissions(createFile, file.Author, true);
+
+                log.Log("File was created successfully", HttpContext.Connection.RemoteIpAddress.ToString(), User.Identity.Name);
                 string msg = "File was created successfully";
                 ViewBag.Message = msg;
             }
             catch (Exception e)
             {
+                log.Log(e, HttpContext.Connection.RemoteIpAddress.ToString(), file.Author);
                 string error = "File was not created successfully";
                 ViewBag.Error = error;
             }
             return View();
         }
-
-
-
-
+        public IActionResult ListFiles()
+        {
+            var listFiles = fileService.GetFiles();
+            return View(listFiles);
+        }
 
         [HttpGet]
         public IActionResult editFile(Guid id)
@@ -96,55 +89,41 @@ namespace WebApplication.Controllers
             return View(myModel);
         }
 
-
-
         [HttpPost]
         [Authorize]
         public IActionResult editFile(Guid filename, string changes, ListFileViewModels file)
         {
             try
             {
-                if (textFileDbRepository.GetPermissions().Where(x => x.FileName == filename && x.UserName == User.Identity.Name && x.UserAccess == true).FirstOrDefault() != null)
-                //  if (fileService.GetPermissions().Where(//x => //x.FileIdFk == id && x.UserName == User.Identity.Name && x.UserAccess == true).Any())
+                if (textFileDbRepository.GetPermissions().Where(x => x.FileName == filename && x.UserName == User.Identity.Name 
+                                                                && x.UserAccess == true).FirstOrDefault() != null)
                 {
-
                     file.FileName = filename;
                     file.LastEditedBy = User.Identity.Name;
                     changes = file.Data;
                     file.DigitalSignature = Convert.ToBase64String(fileService.DigitalSign(changes));
                     fileService.EditFile(filename, changes, file);
 
-
-
-
+                    log.Log("File was updated successfully", HttpContext.Connection.RemoteIpAddress.ToString(), User.Identity.Name);
                     string error = "Updated successfully";
                     ViewBag.Error = error;
                 }
                 else
                 {
                     throw new Exception("user does not have access to edit file");
+
                 }
             }
 
-
-
             catch (Exception ex)
             {
-
                 string error = "Was Not Updated Successfully!";
                 ViewBag.Error = error;
-
+                log.Log(ex, HttpContext.Connection.RemoteIpAddress.ToString(), file.Author);
             }
             return RedirectToAction("ListFiles");
         }
 
-
-
-        public IActionResult ListFiles()
-        {
-            var listFiles = fileService.GetFiles();
-            return View(listFiles);
-        }
         //public IActionResult Share(Acl acl)
 
         //{           
@@ -155,19 +134,11 @@ namespace WebApplication.Controllers
         //    return View(getFile);
         //}
 
-
-
         public IActionResult ListAcl()
         {
             var listAcl = fileService.GetUsers();
             return View(listAcl);
         }
-
-
-
-
-
-
 
         //fileService.ShareFile(acl.FileIdFk, acl.UserName, acl);
         //ViewBag.Message = "File was shared successfully";

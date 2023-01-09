@@ -1,24 +1,15 @@
 ﻿@model IEnumerable<Domain.Models.TextFile>
 
-
-
 @{
     ViewData["Title"] = "ListFiles";
 }
-
-
-
-<h1>ListFiles</h1>
-
-
-
+<h1>List Of Files</h1>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-
             <th>
                 @Html.DisplayNameFor(model => model.FileName)
             </th>
@@ -36,14 +27,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.LastUpdated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DigitalSignature)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FilePath)
-            </th>
-            <th></th>
+            </th>           
         </tr>
     </thead>
     <tbody>
@@ -69,15 +53,13 @@
                     @Html.DisplayFor(modelItem => item.LastUpdated)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DigitalSignature)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FilePath)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "editfile", new {  id=item.FileName  }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @if (User.Identity.IsAuthenticated == true){
+                        
+                    @Html.ActionLink("Edit|", "editfile", new {  id=item.FileName });
+                    @Html.ActionLink("Details|", "Details", new { /* id=item.PrimaryKey */ });
+                    @Html.ActionLink("Delete|", "Delete", new { /* id=item.PrimaryKey */ });
+                    }
+                    
                 </td>
             </tr>
         }

@@ -15,5 +15,6 @@ namespace DataAccess.context
         }
         public DbSet<TextFile> TextFiles { get; set; }
         public DbSet<Acl> Acls { get; set; }
+        public DbSet<Log> Logs { get; set; }
     }
 }

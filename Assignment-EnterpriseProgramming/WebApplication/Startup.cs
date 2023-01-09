@@ -1,6 +1,7 @@
 using BusinessLogic.Services;
 using DataAccess.context;
 using DataAccess.Repositories;
+using Domain.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -35,7 +36,10 @@ namespace WebApplication
            
             services.AddScoped<TextFileDbRepository>();
             services.AddScoped<FileService>();
-            
+            services.AddScoped<LogService>();
+            services.AddScoped<ILogRepository, LogViaEmailRepository>();
+            //services.AddScoped<ILogRepository, LogViaDBRepository>();
+
 
         }
 

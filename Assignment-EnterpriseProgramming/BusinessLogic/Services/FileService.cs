@@ -89,8 +89,18 @@ namespace BusinessLogic.Services
                 LastUpdated = DateTime.Now,
                 LastEditedBy = file.LastEditedBy,
                 Data = changes,
-                DigitalSignature = Convert.ToString(DigitalSign(changes))
             });
+        }
+
+        public void ShareFile(Guid filename, string recepient)
+        {
+            textFileDbRepository.ShareFile(filename, recepient, new Acl()
+            {
+                FileName = filename,
+                UserName = recepient
+            });
+
+
         }
         public IQueryable<Acl> GetPermissions()
         {
@@ -137,7 +147,7 @@ namespace BusinessLogic.Services
             return signedHash;
         }
 
-       
+
     }
 }
 
@@ -145,4 +155,4 @@ namespace BusinessLogic.Services
 
 
 
-    
+

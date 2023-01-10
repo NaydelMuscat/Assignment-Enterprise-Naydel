@@ -37,8 +37,8 @@ namespace WebApplication
             services.AddScoped<TextFileDbRepository>();
             services.AddScoped<FileService>();
             services.AddScoped<LogService>();
-            services.AddScoped<ILogRepository, LogViaEmailRepository>();
-            //services.AddScoped<ILogRepository, LogViaDBRepository>();
+          //  services.AddScoped<ILogRepository, LogViaEmailRepository>();
+            services.AddScoped<ILogRepository, LogViaDBRepository>();
 
 
         }
@@ -53,7 +53,10 @@ namespace WebApplication
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+                //app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

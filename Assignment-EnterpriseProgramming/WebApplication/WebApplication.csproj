@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
+    <Folder Include="wwwroot\Data2\" />
   </ItemGroup>
 
 </Project>

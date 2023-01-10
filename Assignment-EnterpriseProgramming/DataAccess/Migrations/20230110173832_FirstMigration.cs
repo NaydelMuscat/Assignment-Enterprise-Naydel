@@ -47,14 +47,28 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Msg = table.Column<string>(nullable: true),
+                    Ipaddress = table.Column<string>(nullable: true),
+                    User = table.Column<string>(nullable: true),
+                    TimeStamp = table.Column<DateTime>(nullable: false),
+                    Changes = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TextFiles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     FileName = table.Column<Guid>(nullable: false),
                     UploadedOn = table.Column<DateTime>(nullable: false),
-                    Data = table.Column<string>(nullable: false),
+                    Data = table.Column<string>(nullable: true),
                     Author = table.Column<string>(maxLength: 100, nullable: false),
                     LastEditedBy = table.Column<string>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true),
@@ -63,7 +77,7 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TextFiles", x => x.Id);
+                    table.PrimaryKey("PK_TextFiles", x => x.FileName);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,7 +193,6 @@ namespace DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(nullable: true),
-                    FileIdFk = table.Column<int>(nullable: false),
                     FileName = table.Column<Guid>(nullable: false),
                     UserAccess = table.Column<bool>(nullable: false)
                 },
@@ -187,17 +200,17 @@ namespace DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Acls", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Acls_TextFiles_FileIdFk",
-                        column: x => x.FileIdFk,
+                        name: "FK_Acls_TextFiles_FileName",
+                        column: x => x.FileName,
                         principalTable: "TextFiles",
-                        principalColumn: "Id",
+                        principalColumn: "FileName",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Acls_FileIdFk",
+                name: "IX_Acls_FileName",
                 table: "Acls",
-                column: "FileIdFk");
+                column: "FileName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -258,6 +271,9 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Logs");
 
             migrationBuilder.DropTable(
                 name: "TextFiles");

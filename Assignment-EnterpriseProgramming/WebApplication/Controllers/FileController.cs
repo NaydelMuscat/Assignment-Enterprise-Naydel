@@ -46,7 +46,7 @@ namespace WebApplication.Controllers
                 if (filepath != null)
                 {//C:\Users\User\Desktop\Enterprise\Assignment-EnterpriseProgramming\WebApplication\Data\
                     string uniqueFileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(filepath.FileName);
-                    string absolutePath = webHostEnvironment.ContentRootPath + @"\Data\" + uniqueFileName;
+                    string absolutePath = webHostEnvironment.WebRootPath + @"\Data\" + uniqueFileName;
                     using (var destinationFile = System.IO.File.Create(absolutePath))
                     {
                         filepath.CopyTo(destinationFile);
@@ -59,7 +59,7 @@ namespace WebApplication.Controllers
                
                 fileService.CreatePermissions(createFile, file.Author, true);
 
-                log.Log("File was created successfully", HttpContext.Connection.RemoteIpAddress.ToString(), User.Identity.Name);
+                log.Log("File was created successfully", HttpContext.Connection.RemoteIpAddress.ToString(), file.Author);
                 string msg = "File was created successfully";
                 ViewBag.Message = msg;
             }
@@ -103,7 +103,7 @@ namespace WebApplication.Controllers
                     changes = file.Data;
                     file.DigitalSignature = Convert.ToBase64String(fileService.DigitalSign(changes));
                     fileService.EditFile(filename, changes, file);
-
+                    
                     log.Log("File was updated successfully", HttpContext.Connection.RemoteIpAddress.ToString(), User.Identity.Name);
                     string error = "Updated successfully";
                     ViewBag.Error = error;
@@ -124,36 +124,47 @@ namespace WebApplication.Controllers
             return RedirectToAction("ListFiles");
         }
 
-        //public IActionResult Share(Acl acl)
+        [HttpGet]
+        public IActionResult ShareFile(Guid fileId)
 
-        //{           
-        //        fileService.ShareFile(acl.FileIdFk, acl.UserName, acl);
-        //        var getFile = fileService.GetFiles().SingleOrDefault(x => x.Id == acl.FileIdFk);
+        {
+            var file = fileService.GetFile(fileId);
+            var acl = new Acl { FileName = file.FileName, UserName = User.Identity.Name };
 
+            return View(acl);
+        }
 
-        //    return View(getFile);
-        //}
+        [HttpPost]
+        public IActionResult ShareFile(Guid fileid, string user)
+        {
+            try
+            {
+                var file = fileService.GetFile(fileid);
+                if(file != null)
+                {
+                    fileService.ShareFile(fileid, user);
+                    string msg = "File has been shared successfully";
+                    ViewBag.Message = msg;
+                }
+            }
+            catch(Exception ex)
+            {
+                string msg = "File was not shared successfully";
+                ViewBag.Message = msg;
+            }
+            return RedirectToAction("ListFiles");
+        }
 
         public IActionResult ListAcl()
         {
             var listAcl = fileService.GetUsers();
             return View(listAcl);
         }
-
-        //fileService.ShareFile(acl.FileIdFk, acl.UserName, acl);
-        //ViewBag.Message = "File was shared successfully";
-        //var listFiles = fileService.GetFile();
-        //return View("ListFiles", listFiles);
+       
+       
 
 
 
-        //var file = fileService.GetFile(id);
-        //if (file == null)
-        //{
-        //    ViewBag.Error = "File doesn't exist, Cannot share file";
-        //    var listfile = fileService.GetFiles();
-        //    return View("ListFiles", listfile);
-        //}
-        //else return View(file);
-    }
+       
+}
 }

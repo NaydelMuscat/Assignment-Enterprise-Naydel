@@ -1,0 +1,14 @@
+validation ?
+Digital signature - represents the data and store it in the database - called every edit to the file
+Share Controller - making use of the user identity, which this will create a dropdown list to select a username - Making the first part of the controller
+Edit Controller - Not allowing user to access the page if they dont have access
+
+Task 6 - Website hosting - The share, edit, create needs to be done 1/3
+
+Task 7 
+Create TextFileInFileRepository.cs
+Newly created files stre them in a file called inventory.txt
+JSON File Format - https://stackoverflow.com/questions/16921652/how-to-write-a-json-file-in-c
+Edit method - changes of data are saved in the file directly
+Share method - saving permissions in acl.txt (json)
+Interface 

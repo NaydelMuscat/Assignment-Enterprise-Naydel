@@ -32,13 +32,15 @@ namespace DataAccess.Repositories
             return fileSharingContext.Acls;
         }
 
-        //public void ShareFile(Guid fileId, string Recipient)
-        //{
-        //    var recipient = fileSharingContext.Acls.SingleOrDefault(x => x.UserName.Equals(Recipient));
-        //    var fileid = GetFile(fileId).Id;
-        //    recipient.FileName = fileid;
-        //    fileSharingContext.SaveChanges();
-        //}
+        public void ShareFile(Guid fileid, string recipient, Acl acl)
+        {
+            var recipientAcl = fileSharingContext.Acls.Where(x =>x.FileName == fileid && x.UserName == recipient).FirstOrDefault();
+            acl.FileName = fileid;
+            acl.UserName = recipient;
+
+            fileSharingContext.Add(acl);
+            fileSharingContext.SaveChanges(); 
+        }
         public void CreatePermissions(Acl acl)
         {
             fileSharingContext.Acls.Add(acl);

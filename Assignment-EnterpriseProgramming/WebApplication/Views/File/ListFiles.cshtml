@@ -55,9 +55,10 @@
                 <td>
                     @if (User.Identity.IsAuthenticated == true){
                         
-                    @Html.ActionLink("Edit|", "editfile", new {  id=item.FileName });
-                    @Html.ActionLink("Details|", "Details", new { /* id=item.PrimaryKey */ });
-                    @Html.ActionLink("Delete|", "Delete", new { /* id=item.PrimaryKey */ });
+                    @Html.ActionLink("Edit |", "editfile", new {  id=item.FileName });
+                    @Html.ActionLink("Share |", "ShareFile", new { id=item.FileName });
+                    @Html.ActionLink("Delete |", "Delete", new { /* id=item.PrimaryKey */ });
+
                     }
                     
                 </td>

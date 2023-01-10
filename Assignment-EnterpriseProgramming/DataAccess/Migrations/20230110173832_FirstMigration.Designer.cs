@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(FileSharingContext))]
-    [Migration("20230108163102_ThirdMigration")]
-    partial class ThirdMigration
+    [Migration("20230110173832_FirstMigration")]
+    partial class FirstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,32 @@ namespace DataAccess.Migrations
                     b.HasIndex("FileName");
 
                     b.ToTable("Acls");
+                });
+
+            modelBuilder.Entity("Domain.Models.Log", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Changes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ipaddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Msg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("User")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("Domain.Models.TextFile", b =>

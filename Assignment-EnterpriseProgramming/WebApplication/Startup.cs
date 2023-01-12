@@ -2,6 +2,7 @@ using BusinessLogic.Services;
 using DataAccess.context;
 using DataAccess.Repositories;
 using Domain.Interface;
+using Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +29,7 @@ namespace WebApplication
             services.AddDbContext<FileSharingContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<CustomUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<FileSharingContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();

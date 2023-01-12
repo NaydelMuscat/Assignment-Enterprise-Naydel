@@ -1,0 +1,12 @@
+Device Templates - Define a Collection of Graph Templates and Data Queries that belong to a class of Devices
+ - Supports SNMP, ICMP, TCP and UDP
+ - Has a built in supports for meta attributes. includes built in device templates.
+ - provides automatic graph and data source creation control.
+ - Supports extensible attributes.
+ - Graph assignment controlled through Device Templates 
+ 
+Graph Templates - Define how to paint the Graph, it size, legend, left and right Axis and it Canvas
+
+The purpose of Graph Templates is to simplify the Automation process by pre-defining the layout of Graphs for various metrics that are to be monitored in Cacti.
+
+Data templates -  Define how data is to be stored in the RRDfile and how often to collect that data

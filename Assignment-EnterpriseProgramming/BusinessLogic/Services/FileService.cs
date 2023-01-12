@@ -50,7 +50,7 @@ namespace BusinessLogic.Services
         //GetFiles
         public IQueryable<TextFile> GetFiles()
         {
-            var result = from file in textFileDbRepository.GetFiles()
+            var result = from file in textFileDbRepository.GetFiles() 
                          select new TextFile()
                          {
                              FileName = file.FileName,

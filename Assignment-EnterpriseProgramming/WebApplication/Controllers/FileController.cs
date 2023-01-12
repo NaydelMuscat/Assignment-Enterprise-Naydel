@@ -46,7 +46,8 @@ namespace WebApplication.Controllers
                 if (filepath != null)
                 {//C:\Users\User\Desktop\Enterprise\Assignment-EnterpriseProgramming\WebApplication\Data\
                     string uniqueFileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(filepath.FileName);
-                    string absolutePath = webHostEnvironment.WebRootPath + @"\Data\" + uniqueFileName;
+                    string absolutePath = webHostEnvironment.ContentRootPath + @"\Data\" + uniqueFileName;
+                    //string absolutePath = webHostEnvironment.WebRootPath + @"\Data\" + uniqueFileName;
                     using (var destinationFile = System.IO.File.Create(absolutePath))
                     {
                         filepath.CopyTo(destinationFile);
@@ -105,8 +106,8 @@ namespace WebApplication.Controllers
                     fileService.EditFile(filename, changes, file);
                     
                     log.Log("File was updated successfully", HttpContext.Connection.RemoteIpAddress.ToString(), User.Identity.Name);
-                    string error = "Updated successfully";
-                    ViewBag.Error = error;
+                    string msg = "Updated successfully";
+                    ViewBag.Message = msg;
                 }
                 else
                 {
